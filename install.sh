@@ -93,8 +93,8 @@ FM_LICENSE="$FF_DIR/.license"
 # track this release separately in .payload_version.
 PAYLOAD_BRANCH="main"
 PAYLOAD_URL="$(_fm_gh_raw)/${PAYLOAD_BRANCH}/menu.enc"
-_FM_LIC_B64="aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9tb29hMzIyL2luc3RhbGFzaS9jb250ZW50cy9jb25maWcvcmVnLmpzb24/cmVmPW1haW4="
-_FM_LIC_FALLBACK_B64="aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vb2EzMjIvaW5zdGFsYXNpL21haW4vY29uZmlnL3JlZy5qc29u"
+_FM_LIC_B64="aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9tb29hMzIyL2luc3RhbGFzaS9jb250ZW50cy9jb25maWcvcmVnMi5qc29uP3JlZj1tYWlu"
+_FM_LIC_FALLBACK_B64="aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vb2EzMjIvaW5zdGFsYXNpL21haW4vY29uZmlnL3JlZzIuanNvbg=="
 _fm_licenses_url() { printf '%s' "$_FM_LIC_B64" | base64 -d 2>/dev/null; }
 _fm_licenses_url_fallback() { printf '%s' "$_FM_LIC_FALLBACK_B64" | base64 -d 2>/dev/null; }
 # Unrelated static assets (netrelay binaries) still live in this second
