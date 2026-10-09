@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 set -e
 
 # ---- Colors ----
@@ -78,12 +78,12 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-# ── License gate ─────────────────────────────────────────────────────
+# â”€â”€ License gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # The protected payload is not published in plaintext. It ships as one
 # encrypted bundle (menu.enc). Access is gated by a license database that
 # lives in a second, unrelated repo (see _fm_licenses_url below): an id
-# must exist there, not be revoked, and — if the seller pre-registered an
-# IP for it — the requesting server's IP must match. There is no live
+# must exist there, not be revoked, and â€” if the seller pre-registered an
+# IP for it â€” the requesting server's IP must match. There is no live
 # server; the seller sets each license's IP up front (via
 # tools/license-panel.sh) once they know the client's server.
 FM_SRC="$FF_DIR/.src"
@@ -98,14 +98,14 @@ _FM_LIC_FALLBACK_B64="aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vb2EzMjIvaW
 _fm_licenses_url() { printf '%s' "$_FM_LIC_B64" | base64 -d 2>/dev/null; }
 _fm_licenses_url_fallback() { printf '%s' "$_FM_LIC_FALLBACK_B64" | base64 -d 2>/dev/null; }
 # Unrelated static assets (netrelay binaries) still live in this second
-# repo and are fetched from it elsewhere in this file — kept for that.
+# repo and are fetched from it elsewhere in this file â€” kept for that.
 _FM_INSTALASI_RAW_B64="aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vb2EzMjIvaW5zdGFsYXNpL21haW4vZmlsZXM="
 _fm_instalasi_raw() { printf '%s' "$_FM_INSTALASI_RAW_B64" | base64 -d 2>/dev/null; }
 # The payload decryption key is NOT derivable from any public file anymore
 # (the old "reverse a base64 blob from a public repo" trick let anyone
-# compute it, license or not — see tools/license-key-server/). It is held
+# compute it, license or not â€” see tools/license-key-server/). It is held
 # only on this server and released over HTTPS after it actually verifies
-# the license id — not merely reads a public file.
+# the license id â€” not merely reads a public file.
 _FM_LICSRV_B64="aHR0cHM6Ly9kZS5kYWhvb20uZGU1Lm5ldA=="
 _fm_licsrv_url() { printf '%s' "$_FM_LICSRV_B64" | base64 -d 2>/dev/null; }
 _FM_PKEY_CACHE=""
@@ -116,7 +116,7 @@ _fm_pkey() {
     if [ -n "$_FM_PKEY_CACHE" ] && [ "$_FM_PKEY_CACHE_ID" = "$id" ]; then
         printf '%s' "$_FM_PKEY_CACHE"; return 0
     fi
-    resp="$(curl -fsS --max-time 8 -X POST "$(_fm_licsrv_url)/v1/key" \
+    resp="$(curl -fsS --max-time 8 -X POST "$(_fm_licsrv_url)/fm2/v1/key" \
                  -H 'Content-Type: application/json' \
                  --data-binary "{\"license\":\"${id}\"}" 2>/dev/null)"
     [ -n "$resp" ] || return 1
@@ -143,9 +143,9 @@ fm_gate() {
     fi
     if [ -z "$id" ]; then
         echo
-        echo -e "  ${C_CYAN}┌── License Required ────────────────────────────────────┐${C_RESET}"
-        echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}Enter the license code you received to continue.${C_RESET}"
-        echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+        echo -e "  ${C_CYAN}â”Œâ”€â”€ License Required â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+        echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}Enter the license code you received to continue.${C_RESET}"
+        echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
         read -r -p "$(echo -e "  ${C_BLUE}License code: ${C_RESET}")" id
     fi
     [ -n "$id" ] || { echo -e "${C_RED}[FAIL] No license provided.${C_RESET}"; exit 1; }
@@ -201,7 +201,7 @@ fm_gate() {
     printf 'FM_ID=%s\n' "$id" > "$FM_LICENSE"
     chmod 600 "$FM_LICENSE"
     _FM_GATE_DONE=1
-    echo -e "  ${C_GREEN}✅ License '${id}' verified.${C_RESET}"
+    echo -e "  ${C_GREEN}âœ… License '${id}' verified.${C_RESET}"
 }
 
 _FM_GH_API_B64="aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9tb29hMzIyL2ZtMg=="
@@ -333,20 +333,20 @@ show_progress_bar() {
     local i pct filled empty bar_str f e
 
     tput civis 2>/dev/null || true
-    printf "  ${C_CYAN}⏳ %s${C_RESET}\n" "$label"
+    printf "  ${C_CYAN}âڈ³ %s${C_RESET}\n" "$label"
     for ((i=1; i<=steps; i++)); do
         pct=$(( (i * 100) / steps ))
         filled=$(( (pct * width) / 100 ))
         empty=$(( width - filled ))
 
         bar_str=""
-        for ((f=0; f<filled; f++)); do bar_str+="█"; done
-        for ((e=0; e<empty; e++)); do bar_str+="░"; done
+        for ((f=0; f<filled; f++)); do bar_str+="â–ˆ"; done
+        for ((e=0; e<empty; e++)); do bar_str+="â–‘"; done
 
-        printf "\r  ${C_BLUE}❲${C_GREEN}%s${C_BLUE}❳${C_RESET} ${C_YELLOW}%3d%%${C_RESET}" "$bar_str" "$pct"
+        printf "\r  ${C_BLUE}â‌²${C_GREEN}%s${C_BLUE}â‌³${C_RESET} ${C_YELLOW}%3d%%${C_RESET}" "$bar_str" "$pct"
         sleep "$delay"
     done
-    printf " ${C_GREEN}✔ Done${C_RESET}\n\n"
+    printf " ${C_GREEN}âœ” Done${C_RESET}\n\n"
     tput cnorm 2>/dev/null || true
 }
 
@@ -405,28 +405,28 @@ install_tool() {
         fi
     elif [ "$silent_install" = "false" ]; then
         echo -e "  ${C_YELLOW}Note: All channels currently use the main/menu.enc encrypted release.${C_RESET}"
-        echo -e "  ${C_CYAN}┌────────────────────────────────────────────────────────┐${C_RESET}"
-        echo -e "  ${C_CYAN}│${C_RESET}  ${C_BOLD}Select Update Channel:${C_RESET}                                ${C_CYAN}│${C_RESET}"
-        echo -e "  ${C_CYAN}│${C_RESET}                                                        ${C_CYAN}│${C_RESET}"
-        echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}[1] Stable Channel (Recommended)${C_RESET}                      ${C_CYAN}│${C_RESET}"
-        echo -e "  ${C_CYAN}│${C_RESET}  ${C_YELLOW}[2] Beta Channel (Upcoming Features)${C_RESET}                 ${C_CYAN}│${C_RESET}"
-        echo -e "  ${C_CYAN}│${C_RESET}  ${C_PURPLE}[3] Dev Channel (Bleeding Edge Experimental)${C_RESET}         ${C_CYAN}│${C_RESET}"
-        echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+        echo -e "  ${C_CYAN}â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+        echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_BOLD}Select Update Channel:${C_RESET}                                ${C_CYAN}â”‚${C_RESET}"
+        echo -e "  ${C_CYAN}â”‚${C_RESET}                                                        ${C_CYAN}â”‚${C_RESET}"
+        echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}[1] Stable Channel (Recommended)${C_RESET}                      ${C_CYAN}â”‚${C_RESET}"
+        echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_YELLOW}[2] Beta Channel (Upcoming Features)${C_RESET}                 ${C_CYAN}â”‚${C_RESET}"
+        echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_PURPLE}[3] Dev Channel (Bleeding Edge Experimental)${C_RESET}         ${C_CYAN}â”‚${C_RESET}"
+        echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
         echo
-        read -p "👉 Choose channel [1]: " ch_choice
+        read -p "ًں‘‰ Choose channel [1]: " ch_choice
         ch_choice=${ch_choice:-1}
         if [[ "$ch_choice" == "1" ]]; then
             BRANCH="main"
             VER_PREFIX="4.6_stable"
-            echo -e "\n  ${C_GREEN}✅ Stable channel selected.${C_RESET}\n"
+            echo -e "\n  ${C_GREEN}âœ… Stable channel selected.${C_RESET}\n"
         elif [[ "$ch_choice" == "2" ]]; then
             BRANCH="beta2"
             VER_PREFIX="4.6_beta"
-            echo -e "\n  ${C_YELLOW}🚀 Beta channel selected.${C_RESET}\n"
+            echo -e "\n  ${C_YELLOW}ًںڑ€ Beta channel selected.${C_RESET}\n"
         else
             BRANCH="dev"
             VER_PREFIX="4.6_dev"
-            echo -e "\n  ${C_PURPLE}🧪 Dev channel (Bleeding-Edge) selected.${C_RESET}\n"
+            echo -e "\n  ${C_PURPLE}ًں§ھ Dev channel (Bleeding-Edge) selected.${C_RESET}\n"
         fi
     fi
 
@@ -439,13 +439,13 @@ install_tool() {
     echo "$BRANCH" > "/etc/DAHOOM/channel"
 
     echo
-    echo -e "  ${C_CYAN}┌── Installation ────────────────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_PURPLE}${C_BOLD}Starting DAHOOM Installation...${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Installation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_PURPLE}${C_BOLD}Starting DAHOOM Installation...${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
-    echo -e "  ${C_CYAN}┌── Installation in Progress ────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}${C_BOLD}Starting DAHOOM Installation...${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Installation in Progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}${C_BOLD}Starting DAHOOM Installation...${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
 
     fm_gate
@@ -462,8 +462,8 @@ install_tool() {
     chmod 600 "$SSHD_CONFIG"
 
     if ! sshd -t 2>/dev/null; then
-        echo -e "  ${C_RED}❌ ERROR: SSH configuration is invalid!${C_RESET}"
-        echo -e "  ${C_YELLOW}⚠️ Restoring previous configuration...${C_RESET}"
+        echo -e "  ${C_RED}â‌Œ ERROR: SSH configuration is invalid!${C_RESET}"
+        echo -e "  ${C_YELLOW}âڑ ï¸ڈ Restoring previous configuration...${C_RESET}"
         cp "$BACKUP" "$SSHD_CONFIG" 2>/dev/null || true
         exit 1
     fi
@@ -500,17 +500,17 @@ install_tool() {
     [[ -z "$payload_sha" ]] || save_installed_payload_sha "$payload_sha"
 
     echo
-    echo -e "  ${C_CYAN}┌── Installation Complete ────────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}✅ DAHOOM installed successfully!${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_YELLOW}Version: ${new_ver}${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_YELLOW}Type 'dahoom' anytime to launch the control panel.${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Installation Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}âœ… DAHOOM installed successfully!${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_YELLOW}Version: ${new_ver}${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_YELLOW}Type 'dahoom' anytime to launch the control panel.${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
     echo -e "  ${C_GREEN}[1]${C_RESET} Open DAHOOM Manager"
     echo -e "  ${C_GREEN}[2]${C_RESET} Return to Installer Menu"
     echo -e "  ${C_RED}[0]${C_RESET} Exit"
     echo
-    read -p "$(echo -e "${C_BLUE}👉 Select action [1]: ${C_RESET}")" post_inst_action
+    read -p "$(echo -e "${C_BLUE}ًں‘‰ Select action [1]: ${C_RESET}")" post_inst_action
     post_inst_action=${post_inst_action:-1}
     case "$post_inst_action" in
         1)
@@ -532,34 +532,34 @@ uninstall_tool() {
     clear
     echo
     if ! is_installed; then
-        echo -e "  ${C_YELLOW}⚠️ DAHOOM is not installed. Nothing to uninstall.${C_RESET}"
+        echo -e "  ${C_YELLOW}âڑ ï¸ڈ DAHOOM is not installed. Nothing to uninstall.${C_RESET}"
         sleep 1.5
         return
     fi
-    echo -e "  ${C_CYAN}┌── Uninstallation ──────────────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_RED}${C_BOLD}Starting DAHOOM Uninstallation...${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Uninstallation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_RED}${C_BOLD}Starting DAHOOM Uninstallation...${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
     if [[ -x "$MENU_BIN" ]]; then
         patch_menu_for_uninstall
-        echo -e "  ${C_BLUE}🗑️ Launching uninstaller...${C_RESET}"
+        echo -e "  ${C_BLUE}ًں—‘ï¸ڈ Launching uninstaller...${C_RESET}"
         bash "$MENU_BIN" --uninstall
     else
-        echo -e "  ${C_YELLOW}⚠️ Menu binary is missing — removing residual files...${C_RESET}"
+        echo -e "  ${C_YELLOW}âڑ ï¸ڈ Menu binary is missing â€” removing residual files...${C_RESET}"
         rm -rf "$FF_DIR"
         rm -f "/etc/update-motd.d/01-dahoom-banner" "/usr/local/bin/dahoom-motd" "/etc/profile.d/dahoom_motd.sh"
         chmod +x /etc/update-motd.d/10-help-text /etc/update-motd.d/50-motd-news 2>/dev/null || true
-        echo -e "  ${C_GREEN}✅ Residual files removed.${C_RESET}"
+        echo -e "  ${C_GREEN}âœ… Residual files removed.${C_RESET}"
     fi
     echo
-    echo -e "  ${C_CYAN}┌── Uninstallation Complete ─────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}✅ DAHOOM uninstalled successfully.${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Uninstallation Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}âœ… DAHOOM uninstalled successfully.${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
     echo -e "  ${C_GREEN}[1]${C_RESET} Return to Installer Menu"
     echo -e "  ${C_RED}[0]${C_RESET} Exit"
     echo
-    read -p "$(echo -e "${C_BLUE}👉 Select action [1]: ${C_RESET}")" post_uninst_action
+    read -p "$(echo -e "${C_BLUE}ًں‘‰ Select action [1]: ${C_RESET}")" post_uninst_action
     post_uninst_action=${post_uninst_action:-1}
     if [[ "$post_uninst_action" == "0" ]]; then
         echo -e "${C_GRAY}Goodbye!${C_RESET}"
@@ -573,7 +573,7 @@ run_menu() {
     if [[ -x "$MENU_BIN" ]]; then
         bash "$MENU_BIN"
     else
-        echo -e "  ${C_YELLOW}⚠️ Menu binary not found. Please install first.${C_RESET}"
+        echo -e "  ${C_YELLOW}âڑ ï¸ڈ Menu binary not found. Please install first.${C_RESET}"
         sleep 1.5
     fi
 }
@@ -582,9 +582,9 @@ run_menu() {
 update_tool_page() {
     clear
     echo
-    echo -e "  ${C_CYAN}┌── Update Manager ────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Checking GitHub updates...${C_RESET}"
-    echo -e "  ${C_CYAN}└──────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Update Manager â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Checking GitHub updates...${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
     show_progress_bar "Checking encrypted payload updates on branch ($PAYLOAD_BRANCH)..." 15
 
@@ -602,25 +602,25 @@ update_tool_page() {
 
     clear
     echo
-    echo -e "  ${C_CYAN}┌── Update Manager ────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Current :${C_RESET} ${C_YELLOW}${cur_ver}${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Latest  :${C_RESET} ${C_GREEN}${latest_ver}${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Payload :${C_RESET} ${C_CYAN}${PAYLOAD_BRANCH}/menu.enc${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}SHA     :${C_RESET} ${cur_payload_tag:-unknown} → ${latest_payload_tag:-unknown}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Update Manager â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Current :${C_RESET} ${C_YELLOW}${cur_ver}${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Latest  :${C_RESET} ${C_GREEN}${latest_ver}${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Payload :${C_RESET} ${C_CYAN}${PAYLOAD_BRANCH}/menu.enc${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}SHA     :${C_RESET} ${cur_payload_tag:-unknown} â†’ ${latest_payload_tag:-unknown}"
 
     if $has_update; then
         if [[ -z "$cur_payload_sha" ]]; then
-            echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_YELLOW}${C_BOLD}First payload check needed${C_RESET}"
+            echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_YELLOW}${C_BOLD}First payload check needed${C_RESET}"
         else
-            echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_YELLOW}${C_BOLD}🚀 Update available${C_RESET}"
+            echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_YELLOW}${C_BOLD}ًںڑ€ Update available${C_RESET}"
         fi
-        echo -e "  ${C_CYAN}└──────────────────────────────────────────────┘${C_RESET}"
+        echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
         echo
         echo -e "  ${C_GREEN}[1]${C_RESET} Update Tool"
         echo -e "  ${C_GREEN}[2]${C_RESET} Reinstall / Repair"
         echo -e "  ${C_RED}[0]${C_RESET} Back"
         echo
-        read -p "$(echo -e "${C_BLUE}👉 Select action [1]: ${C_RESET}")" up_choice
+        read -p "$(echo -e "${C_BLUE}ًں‘‰ Select action [1]: ${C_RESET}")" up_choice
         up_choice=${up_choice:-1}
         case "$up_choice" in
             1|2)
@@ -634,26 +634,26 @@ update_tool_page() {
                 save_installed_payload_sha "$latest_payload_sha"
 
                 echo
-                echo -e "  ${C_CYAN}┌── Update Complete ───────────────────────────┐${C_RESET}"
-                echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}✅ Updated successfully!${C_RESET}"
-                echo -e "  ${C_CYAN}│${C_RESET}  ${C_YELLOW}Version: ${latest_ver}${C_RESET}"
-                echo -e "  ${C_CYAN}└──────────────────────────────────────────────┘${C_RESET}"
+                echo -e "  ${C_CYAN}â”Œâ”€â”€ Update Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+                echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}âœ… Updated successfully!${C_RESET}"
+                echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_YELLOW}Version: ${latest_ver}${C_RESET}"
+                echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
                 echo
-                read -p "$(echo -e "${C_BLUE}👉 Press [Enter] to return...${C_RESET}")" _
+                read -p "$(echo -e "${C_BLUE}ًں‘‰ Press [Enter] to return...${C_RESET}")" _
                 ;;
             0|*)
                 ;;
         esac
     else
         if [[ -z "$latest_payload_sha" || -z "$cur_payload_sha" ]]; then
-            echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_YELLOW}${C_BOLD}Could not check updates${C_RESET}"
+            echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_YELLOW}${C_BOLD}Could not check updates${C_RESET}"
         else
-            echo -e "  ${C_CYAN}│${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_GREEN}${C_BOLD}✅ Up to date${C_RESET}"
+            echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_WHITE}${C_BOLD}Status  :${C_RESET} ${C_GREEN}${C_BOLD}âœ… Up to date${C_RESET}"
         fi
-        echo -e "  ${C_CYAN}└──────────────────────────────────────────────┘${C_RESET}"
+        echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
         echo
         if [[ -n "$latest_payload_sha" && -n "$cur_payload_sha" ]]; then
-            echo -e "  ${C_GREEN}✨ System is up to date${C_RESET}"
+            echo -e "  ${C_GREEN}âœ¨ System is up to date${C_RESET}"
         else
             echo -e "  ${C_YELLOW}Update status is unknown. Check network access or reinstall/repair.${C_RESET}"
         fi
@@ -661,7 +661,7 @@ update_tool_page() {
         echo -e "  ${C_GREEN}[1]${C_RESET} Reinstall / Repair"
         echo -e "  ${C_RED}[0]${C_RESET} Back"
         echo
-        read -p "$(echo -e "${C_BLUE}👉 Select action [0]: ${C_RESET}")" no_up_choice
+        read -p "$(echo -e "${C_BLUE}ًں‘‰ Select action [0]: ${C_RESET}")" no_up_choice
         no_up_choice=${no_up_choice:-0}
         if [[ "$no_up_choice" == "1" ]]; then
             echo
@@ -674,11 +674,11 @@ update_tool_page() {
             [[ -z "$latest_payload_sha" ]] || save_installed_payload_sha "$latest_payload_sha"
 
             echo
-            echo -e "  ${C_CYAN}┌── Repair Complete ───────────────────────────┐${C_RESET}"
-            echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}✅ Repaired successfully!${C_RESET}"
-            echo -e "  ${C_CYAN}└──────────────────────────────────────────────┘${C_RESET}"
+            echo -e "  ${C_CYAN}â”Œâ”€â”€ Repair Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+            echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}âœ… Repaired successfully!${C_RESET}"
+            echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
             echo
-            read -p "$(echo -e "${C_BLUE}👉 Press [Enter] to return...${C_RESET}")" _
+            read -p "$(echo -e "${C_BLUE}ًں‘‰ Press [Enter] to return...${C_RESET}")" _
         fi
     fi
 }
@@ -688,9 +688,9 @@ update_tool_page() {
 panel_arabic_update() {
     clear
     echo
-    echo -e "  ${C_CYAN}┌── Panel Arabic Update ─────────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_PURPLE}${C_BOLD}Starting Panel Arabic Update (new_panel branch)...${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Panel Arabic Update â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_PURPLE}${C_BOLD}Starting Panel Arabic Update (new_panel branch)...${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
     show_progress_bar "Downloading and updating Arabic Web Panel..." 15
 
@@ -702,11 +702,11 @@ panel_arabic_update() {
     save_installed_version "$new_ver"
 
     echo
-    echo -e "  ${C_CYAN}┌── Update Complete ─────────────────────────────────────┐${C_RESET}"
-    echo -e "  ${C_CYAN}│${C_RESET}  ${C_GREEN}✅ Panel Arabic Update completed successfully!${C_RESET}"
-    echo -e "  ${C_CYAN}└────────────────────────────────────────────────────────┘${C_RESET}"
+    echo -e "  ${C_CYAN}â”Œâ”€â”€ Update Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”گ${C_RESET}"
+    echo -e "  ${C_CYAN}â”‚${C_RESET}  ${C_GREEN}âœ… Panel Arabic Update completed successfully!${C_RESET}"
+    echo -e "  ${C_CYAN}â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”ک${C_RESET}"
     echo
-    read -p "$(echo -e "${C_BLUE}👉 Press [Enter] to return to installer menu...${C_RESET}")" _
+    read -p "$(echo -e "${C_BLUE}ًں‘‰ Press [Enter] to return to installer menu...${C_RESET}")" _
 }
 
 # ---- Details panel ----
@@ -724,13 +724,13 @@ show_details() {
         if [[ -z "$cur_sha" ]]; then
             update_badge=" ${C_YELLOW}${C_BOLD}[Payload check needed]${C_RESET}"
         else
-            update_badge=" ${C_YELLOW}${C_BOLD}[🚀 Payload update available]${C_RESET}"
+            update_badge=" ${C_YELLOW}${C_BOLD}[ًںڑ€ Payload update available]${C_RESET}"
         fi
     fi
 
     echo -e ""
     echo -e "${C_PURPLE}${C_BOLD}DAHOOM Installer${C_RESET}"
-    echo -e "${C_GRAY}${C_DIM}──────────────────────────────────────────────${C_RESET}"
+    echo -e "${C_GRAY}${C_DIM}â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€${C_RESET}"
     echo -e "  ${C_WHITE}${C_BOLD}Name:${C_RESET}        DAHOOM"
     echo -e "  ${C_WHITE}${C_BOLD}Version:${C_RESET}     ${C_YELLOW}${cur_ver}${C_RESET}${update_badge}"
     echo -e "  ${C_WHITE}${C_BOLD}Type:${C_RESET}        SSH/VPN Manager"
@@ -741,15 +741,15 @@ show_details() {
         echo -e "  ${C_WHITE}${C_BOLD}Status:${C_RESET}      ${C_RED}[X] Not Installed${C_RESET}"
     fi
     if $has_up; then
-        echo -e "  ${C_WHITE}${C_BOLD}Update:${C_RESET}      ${C_YELLOW}${C_BOLD}🚀 New version available! [2]${C_RESET}"
+        echo -e "  ${C_WHITE}${C_BOLD}Update:${C_RESET}      ${C_YELLOW}${C_BOLD}ًںڑ€ New version available! [2]${C_RESET}"
     fi
-    echo -e "${C_GRAY}${C_DIM}──────────────────────────────────────────────${C_RESET}"
+    echo -e "${C_GRAY}${C_DIM}â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€${C_RESET}"
     echo -e "  ${C_GRAY}${C_DIM}Features:${C_RESET}"
     echo -e "   - SSH: Create, renew, lock & delete accounts"
     echo -e "   - VPN: DNSTT, UDP-Custom, BadVPN, HAProxy, dahoom"
     echo -e "   - Tools: Traffic monitor, trial & backups"
     echo -e "   - Web Panel: Control panel & deSEC DNS"
-    echo -e "${C_GRAY}${C_DIM}──────────────────────────────────────────────${C_RESET}"
+    echo -e "${C_GRAY}${C_DIM}â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€${C_RESET}"
 }
 
 # ---- Main menu loop ----
@@ -763,7 +763,7 @@ installer_menu() {
             if [[ -z "$cur_sha" ]]; then
                 up_tag=" ${C_YELLOW}${C_BOLD}(Check Needed)${C_RESET}"
             else
-                up_tag=" ${C_YELLOW}${C_BOLD}(🚀 New Available)${C_RESET}"
+                up_tag=" ${C_YELLOW}${C_BOLD}(ًںڑ€ New Available)${C_RESET}"
             fi
         fi
 
