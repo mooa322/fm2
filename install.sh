@@ -290,9 +290,11 @@ validate_menu_payload() {
     bash -n "$file" 2>/dev/null || return 1
     [[ -s "$FM_SRC/update_panel.sh" && -s "$FM_SRC/panel/panel.py" ]] || return 1
     bash -n "$FM_SRC/update_panel.sh" 2>/dev/null || return 1
-    grep -qF '_fm_bot_cmd_changehwid_start' "$file" || return 1
-    grep -qF '_fm_bot_cmd_renew_start' "$file" || return 1
-    grep -qF '_fm_bot_admin_account_card' "$file" || return 1
+    # fm2 provides the CLI and panel without the original project's sales bot.
+    # Require its core entry points rather than unrelated Telegram functions.
+    grep -qE '^initial_setup\(\)[[:space:]]*\{' "$file" || return 1
+    grep -qE '^main_menu\(\)[[:space:]]*\{' "$file" || return 1
+    grep -qE '^uninstall_script\(\)[[:space:]]*\{' "$file" || return 1
 }
 install_menu_payload() {
     local source="$1"
